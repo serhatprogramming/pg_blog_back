@@ -36,4 +36,20 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { likes } = req.body;
+    const blog = await Blog.findByPk(id);
+    if (!blog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+    blog.likes = likes;
+    await blog.save();
+    res.json(blog);
+  } catch (error) {
+    res.status(400).json({ error: "Failed to update blog" });
+  }
+});
+
 export default router;
