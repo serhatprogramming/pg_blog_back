@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import databaseUrl from "./config.js";
+import { databaseUrl } from "./config.js";
 
 const sequelize = new Sequelize(databaseUrl, {
   dialect: "postgres",

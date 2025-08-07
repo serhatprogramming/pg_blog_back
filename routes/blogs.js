@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 
-import { Blog } from "../models/blog.js";
+import Blog from "../models/index.js"; // Assuming you have a Blog model defined
 
 router.get("/", (req, res) => {
   res.send("Welcome to the Blog API");
