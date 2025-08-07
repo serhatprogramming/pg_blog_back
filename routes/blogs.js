@@ -1,13 +1,9 @@
 import { Router } from "express";
 const router = Router();
 
-import Blog from "../models/index.js"; // Assuming you have a Blog model defined
+import Blog from "../models/index.js";
 
-router.get("/", (req, res) => {
-  res.send("Welcome to the Blog API");
-});
-
-router.get("/api/blogs", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const blogs = await Blog.findAll();
     res.json(blogs);
@@ -16,7 +12,7 @@ router.get("/api/blogs", async (req, res) => {
   }
 });
 
-router.post("/api/blogs", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { title, author, url, likes } = req.body;
     const blog = await Blog.create({ title, author, url, likes });
@@ -26,7 +22,7 @@ router.post("/api/blogs", async (req, res) => {
   }
 });
 
-router.delete("/api/blogs/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const blog = await Blog.findByPk(id);
