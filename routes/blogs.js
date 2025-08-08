@@ -2,54 +2,52 @@ import { Router } from "express";
 const router = Router();
 
 import Blog from "../models/index.js";
+import blogFinder from "../util/blogFinder.js";
+import asyncTryCatch from "../util/asyncTryCatch.js";
 
-router.get("/", async (req, res) => {
-  try {
+router.get(
+  "/",
+  asyncTryCatch(async (req, res) => {
     const blogs = await Blog.findAll();
     res.json(blogs);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blogs" });
-  }
-});
+  })
+);
 
-router.post("/", async (req, res) => {
-  try {
+router.post(
+  "/",
+  asyncTryCatch(async (req, res) => {
     const { title, author, url, likes } = req.body;
     const blog = await Blog.create({ title, author, url, likes });
     res.status(201).json(blog);
-  } catch (error) {
-    res.status(400).json({ error: "Failed to create blog" });
-  }
-});
+  })
+);
 
-router.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const blog = await Blog.findByPk(id);
+router.delete(
+  "/:id",
+  blogFinder,
+  asyncTryCatch(async (req, res) => {
+    const { blog } = req;
     if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
     await blog.destroy();
     res.status(204).end();
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete blog" });
-  }
-});
+  })
+);
 
-router.put("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { likes } = req.body;
-    const blog = await Blog.findByPk(id);
+router.put(
+  "/:id",
+  blogFinder,
+  asyncTryCatch(async (req, res) => {
+    const { blog } = req;
     if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
+    const { likes } = req.body;
     blog.likes = likes;
     await blog.save();
     res.json(blog);
-  } catch (error) {
-    res.status(400).json({ error: "Failed to update blog" });
-  }
-});
+  })
+);
 
 export default router;
