@@ -4,7 +4,6 @@ const router = Router();
 import models from "../models/index.js";
 const { Blog } = models;
 import blogFinder from "../util/blogFinder.js";
-import asyncTryCatch from "../util/asyncTryCatch.js";
 
 router.get("/", async (req, res) => {
   const blogs = await Blog.findAll();

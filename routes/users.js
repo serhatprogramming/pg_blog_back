@@ -1,16 +1,31 @@
 import express from "express";
 const router = express.Router();
-import User from "../models/index.js";
+import model from "../models/index.js";
+const { User } = model;
 
 router.post("/", async (req, res) => {
   const { username, name } = req.body;
-  try {
-    const user = await User.create({ username, name });
-    res.status(201).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+  if (!username || !name) {
+    return res.status(400).json({ error: "Username and name are required" });
   }
+  const user = await User.create({ username, name });
+  res.status(201).json(user);
+});
+
+router.get("/", async (req, res) => {
+  const users = await User.findAll();
+  res.json(users);
+});
+
+router.put("/:username", async (req, res) => {
+  const { username } = req.params;
+  const user = await User.findOne({ where: { username } });
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  user.username = username;
+  await user.save();
+  res.json(user);
 });
 
 export default router;
