@@ -2,17 +2,36 @@ import { Router } from "express";
 const router = Router();
 
 import models from "../models/index.js";
-const { Blog } = models;
+const { Blog, User } = models;
 import blogFinder from "../util/blogFinder.js";
+import userExtractor from "../util/userExtractor.js";
 
 router.get("/", async (req, res) => {
-  const blogs = await Blog.findAll();
+  const blogs = await Blog.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ["username", "name"],
+        exclude: ["id"],
+      },
+    ],
+  });
   res.json(blogs);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", userExtractor, async (req, res) => {
   const { title, author, url, likes } = req.body;
-  const blog = await Blog.create({ title, author, url, likes });
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ error: "User not authenticated" });
+  }
+  const blog = await Blog.create({
+    title,
+    author,
+    url,
+    likes,
+    userId: user.id,
+  });
   res.status(201).json(blog);
 });
 
