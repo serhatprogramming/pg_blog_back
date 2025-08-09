@@ -35,8 +35,14 @@ router.post("/", userExtractor, async (req, res) => {
   res.status(201).json(blog);
 });
 
-router.delete("/:id", blogFinder, async (req, res) => {
+router.delete("/:id", userExtractor, blogFinder, async (req, res) => {
   const { blog } = req;
+  if (!req.user || !blog) {
+    return res.status(401).json({ error: "Unauthorized or blog not found" });
+  }
+  if (blog.userId !== req.user.id) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
   if (!blog) {
     return res.status(404).json({ error: "Blog not found" });
   }
@@ -44,8 +50,14 @@ router.delete("/:id", blogFinder, async (req, res) => {
   res.status(204).end();
 });
 
-router.put("/:id", blogFinder, async (req, res) => {
+router.put("/:id", userExtractor, blogFinder, async (req, res) => {
   const { blog } = req;
+  if (!req.user || !blog) {
+    return res.status(401).json({ error: "Unauthorized or blog not found" });
+  }
+  if (blog.userId !== req.user.id) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
   if (!blog) {
     return res.status(404).json({ error: "Blog not found" });
   }
