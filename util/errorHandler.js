@@ -19,7 +19,7 @@ const errorHandler = (err, req, res, next) => {
   if (err.code === "23502") {
     return res.status(400).json({ error: "Not null violation" });
   }
-
+  console.error(err);
   // Other errors
   return res.status(500).json({ error: "Internal server error" });
 };
