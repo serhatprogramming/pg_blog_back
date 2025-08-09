@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import model from "../models/index.js";
-const { User } = model;
+const { User, Blog } = model;
 
 router.post("/", async (req, res) => {
   const { username, name } = req.body;
@@ -13,7 +13,14 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const users = await User.findAll();
+  const users = await User.findAll({
+    include: [
+      {
+        model: Blog,
+        attributes: ["title", "author", "url", "likes"],
+      },
+    ],
+  });
   res.json(users);
 });
 
