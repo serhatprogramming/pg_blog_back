@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     return res.status(404).json({ error: "User not found" });
   }
   // Continue with login logic (e.g., password verification, token generation)
-  if (!req.body.password || req.body.password.length !== "secret") {
+  if (!req.body.password || req.body.password !== "secret") {
     return res.status(400).json({ error: "Invalid password" });
   }
   // If password is valid, generate a JWT token
