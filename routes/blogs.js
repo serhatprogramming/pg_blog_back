@@ -1,5 +1,6 @@
 import { Router } from "express";
 const router = Router();
+import { Op } from "sequelize";
 
 import models from "../models/index.js";
 const { Blog, User } = models;
@@ -7,6 +8,13 @@ import blogFinder from "../util/blogFinder.js";
 import userExtractor from "../util/userExtractor.js";
 
 router.get("/", async (req, res) => {
+  const where = {};
+  if (req.query.search) {
+    where[Op.or] = [
+      { title: { [Op.iLike]: `%${req.query.search}%` } },
+      { author: { [Op.iLike]: `%${req.query.search}%` } },
+    ];
+  }
   const blogs = await Blog.findAll({
     include: [
       {
@@ -15,6 +23,7 @@ router.get("/", async (req, res) => {
         exclude: ["id"],
       },
     ],
+    where,
   });
   res.json(blogs);
 });
